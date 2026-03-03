@@ -1,0 +1,528 @@
+// liste : Avocate  Infirmière  Garde autoritaire    Garde brisable   Directeur   Juge
+// A developper : journaliste    garde supplementaire   assitante sociale    politicienne local    ancien partenaires       Chef de cellule     doyen        Détenu médiatique     Informateur      Détenu fragile     Détenu violent     Détenu manipulateur    avocat rival
+
+// Avocate
+
+{
+  "id": "pnj_avocate",
+  "identite": {
+    "nom": "Sophie Bernard",
+    "age": 34,
+    "role": "Avocate pénaliste",
+    "zone_principale": "Parloir",
+    "anciennete": "7 ans de barreau"
+  },
+  "profil_psychologique": {
+    "temperament": "Calme, persuasive, rationnelle",
+    "moral": 70,
+    "loyaute": "Moyenne",
+    "corruptibilite": "Moyenne",
+    "peurs_failles": [
+      "Ruiner sa carrière",
+      "Perdre sa crédibilité professionnelle"
+    ],
+    "motivations": [
+      "Gagner des affaires",
+      "Reconnaissance professionnelle"
+    ]
+  },
+  "competences": {
+    "principale": "Négociation juridique",
+    "secondaires": [
+      "Manipulation verbale",
+      "Dissimulation"
+    ],
+    "autorite_influence": "Moyenne (élevée à l’extérieur)",
+    "stress_max": "Moyen"
+  },
+  "relations": {
+    "allies": [
+      "Certains détenus",
+      "Contacts extérieurs"
+    ],
+    "ennemis": [
+      "Administration pénitentiaire stricte",
+      "Juges intransigeants"
+    ],
+    "opinion_joueur": "Variable"
+  },
+  "comportement_jeu": {
+    "routine_quotidienne": [
+      "Visites au parloir",
+      "Gestion des dossiers juridiques",
+      "Contacts extérieurs hors carte"
+    ],
+    "reactions_cles": [
+      "Prudente lors des premières interactions",
+      "Plus audacieuse si la confiance augmente"
+    ],
+    "declencheurs_conflit": [
+      "Demande trop risquée",
+      "Pression judiciaire excessive",
+      "Menaces directes"
+    ],
+    "possibilites_interaction": [
+      "Transmettre des messages vers l’extérieur",
+      "Modifier ou retarder une procédure",
+      "Détruire ou faire disparaître des preuves",
+      "Mentir aux autorités"
+    ]
+  },
+  "secrets_arcs_narratifs": {
+    "secrets": [
+      "A déjà couvert des irrégularités pour un client"
+    ],
+    "evolution_possible": [
+      "Avocate intègre",
+      "Complice discrète",
+      "Avocate corrompue"
+    ],
+    "evenement_special": [
+      "Enquête judiciaire sur son cabinet",
+      "Trahison ou sacrifice pour le joueur"
+    ]
+  }
+}
+
+
+// Garde corrompu
+
+{
+  "id": "pnj_garde_01",
+  "identite": {
+    "nom": "Marco Leclerc",
+    "age": 45,
+    "role": "Garde",
+    "zone_principale": "Couloirs / Cellules",
+    "anciennete": "12 ans"
+  },
+  "profil_psychologique": {
+    "temperament": "Autoritaire, cynique, impulsif sous pression",
+    "moral": 55,
+    "loyaute": "Élevée envers l’institution",
+    "corruptibilite": "Moyenne",
+    "peurs_failles": [
+      "Perdre le contrôle",
+      "Être humilié par les détenus",
+      "Sanctions disciplinaires"
+    ],
+    "motivations": [
+      "Maintenir l’ordre",
+      "Respect et autorité",
+      "Avantages personnels"
+    ]
+  },
+  "competences": {
+    "principale": "Sécurité et contrôle",
+    "secondaires": [
+      "Intimidation",
+      "Fouille",
+      "Surveillance"
+    ],
+    "autorite_influence": "Élevée à l’intérieur de la prison",
+    "stress_max": "Élevé"
+  },
+  "relations": {
+    "allies": [
+      "Autres gardes",
+      "Direction"
+    ],
+    "ennemis": [
+      "Détenus rebelles",
+      "Personnel jugé trop laxiste"
+    ],
+    "opinion_joueur": "Variable (respect ou hostilité)"
+  },
+  "comportement_jeu": {
+    "routine_quotidienne": [
+      "Rondes de surveillance",
+      "Fouilles de cellules",
+      "Escortes de détenus"
+    ],
+    "reactions_cles": [
+      "Usage de la force si provoqué",
+      "Fermeture des yeux contre avantage"
+    ],
+    "declencheurs_conflit": [
+      "Provocation directe",
+      "Désobéissance",
+      "Pression hiérarchique"
+    ],
+    "possibilites_interaction": [
+      "Laisser passer une infraction",
+      "Introduire ou confisquer un objet",
+      "User de violence",
+      "Fournir des informations internes"
+    ]
+  },
+  "secrets_arcs_narratifs": {
+    "secrets": [
+      "Endetté",
+      "A déjà abusé de son autorité"
+    ],
+    "evolution_possible": [
+      "Garde strict et loyal",
+      "Garde corrompu",
+      "Garde instable et dangereux"
+    ],
+    "evenement_special": [
+      "Enquête interne",
+      "Agression d’un détenu",
+      "Mutation ou licenciement"
+    ]
+  }
+}
+
+
+// Garde humilie
+
+{
+  "id": "pnj_garde_03",
+  "identite": {
+    "nom": "Stefanie Leroy",
+    "age": 29,
+    "role": "Garde",
+    "zone_principale": "Zone commune / Isolement",
+    "anciennete": "1 an"
+  },
+  "profil_psychologique": {
+    "temperament": "Anxieux, réservé, soumis",
+    "moral": 35,
+    "loyaute": "Haute",
+    "corruptibilite": "Moyenne → Élevée (sous pression)",
+    "peurs_failles": [
+      "Humiliation publique",
+      "Conflit direct",
+      "Perdre son emploi"
+    ],
+    "motivations": [
+      "Éviter les ennuis",
+      "Être accepté par ses collègues",
+      "Tenir jusqu’à la fin de la journée"
+    ]
+  },
+  "competences": {
+    "principale": "Application stricte du règlement",
+    "secondaires": [
+      "Surveillance passive"
+    ],
+    "autorite_influence": "Faible",
+    "stress_max": "Faible"
+  },
+  "relations": {
+    "allies": [
+      "Detenus gentils"
+    ],
+    "ennemis": [
+      "Gardes dominants",
+      "Détenus provocateurs"
+    ],
+    "opinion_joueur": "Influençable"
+  },
+  "comportement_jeu": {
+    "routine_quotidienne": [
+      "Postes peu visibles",
+      "Tâches subalternes",
+      "Éviter les interactions"
+    ],
+    "reactions_cles": [
+      "Cède sous pression",
+      "Panique en situation tendue"
+    ],
+    "declencheurs_conflit": [
+      "Moquerie publique",
+      "Ordre contradictoire",
+      "Menace directe"
+    ],
+    "possibilites_interaction": [
+      "Manipulation facile",
+      "Intimidation",
+      "Obtention d’informations",
+      "Poussée à la faute"
+    ]
+  },
+  "secrets_arcs_narratifs": {
+    "secrets": [
+      "Crises d’angoisse non déclarées"
+    ],
+    "evolution_possible": [
+      "Effondrement psychologique",
+      "Garde corrompu par peur",
+      "Garde violent incontrôlable"
+    ],
+    "evenement_special": [
+      "Crise de panique en service",
+      "Faute disciplinaire",
+      "Arrêt maladie ou renvoi"
+    ]
+  }
+}
+
+
+
+
+// Infirmiere
+
+{
+  "id": "pnj_infirmiere_01",
+  "identite": {
+    "nom": "Claire Palisse",
+    "age": 38,
+    "role": "Infirmière pénitentiaire",
+    "zone_principale": "Infirmerie",
+    "anciennete": "6 ans"
+  },
+  "profil_psychologique": {
+    "temperament": "Calme, empathique, réservée",
+    "moral": 72,
+    "loyaute": "Moyenne",
+    "corruptibilite": "Faible → Moyenne",
+    "peurs_failles": [
+      "Violence des détenus",
+      "Émeute",
+      "Sanctions disciplinaires"
+    ],
+    "motivations": [
+      "Soigner sans juger",
+      "Maintenir un minimum d’humanité en prison"
+    ]
+  },
+  "competences": {
+    "principale": "Soins médicaux",
+    "secondaires": [
+      "Premiers secours",
+      "Observation psychologique"
+    ],
+    "autorite_influence": "Faible à moyenne",
+    "stress_max": "Moyen"
+  },
+  "relations": {
+    "allies": [
+      "Détenus vulnérables",
+      "Personnel médical"
+    ],
+    "ennemis": [
+      "Gardes violents",
+      "Détenus manipulateurs"
+    ],
+    "opinion_joueur": "Variable"
+  },
+  "comportement_jeu": {
+    "routine_quotidienne": [
+      "Soins médicaux programmés",
+      "Consultations individuelles",
+      "Gestion des stocks de médicaments"
+    ],
+    "reactions_cles": [
+      "Aide spontanée si situation critique",
+      "Refus d’intervenir si danger immédiat"
+    ],
+    "declencheurs_conflit": [
+      "Pressions pour falsifier un rapport médical",
+      "Violence à l’infirmerie",
+      "Manque de médicaments"
+    ],
+    "possibilites_interaction": [
+      "Soigner ou refuser de soigner",
+      "Délivrer des médicaments",
+      "Cacher une blessure",
+      "Rédiger un rapport médical favorable ou défavorable"
+    ]
+  },
+  "secrets_arcs_narratifs": {
+    "secrets": [
+      "A déjà dissimulé des blessures pour protéger un détenu"
+    ],
+    "evolution_possible": [
+      "Soignante intègre",
+      "Complice discrète",
+      "Infirmière dépassée et brisée"
+    ],
+    "evenement_special": [
+      "Inspection médicale surprise",
+      "Pénurie de médicaments",
+      "Agression à l’infirmerie"
+    ]
+  }
+}
+
+
+// Directeur de prison
+
+{
+  "id": "pnj_directeur_01",
+  "identite": {
+    "nom": "Henri Dubois",
+    "age": 58,
+    "role": "Directeur de prison",
+    "zone_principale": "Administration",
+    "anciennete": "20 ans"
+  },
+  "profil_psychologique": {
+    "temperament": "Froid, calculateur, politique",
+    "moral": 65,
+    "loyaute": "Institution",
+    "corruptibilite": "Faible (officielle) → Moyenne (officieuse)",
+    "peurs_failles": [
+      "Scandale médiatique",
+      "Perte de poste",
+      "Inspection gouvernementale"
+    ],
+    "motivations": [
+      "Maintenir son pouvoir",
+      "Protéger l’image de la prison",
+      "Atteindre ses objectifs de carrière"
+    ]
+  },
+  "competences": {
+    "principale": "Gestion et stratégie",
+    "secondaires": [
+      "Manipulation politique",
+      "Communication de crise"
+    ],
+    "autorite_influence": "Très élevée",
+    "stress_max": "Élevé"
+  },
+  "relations": {
+    "allies": [
+      "Cadres administratifs",
+      "Gardes loyaux"
+    ],
+    "ennemis": [
+      "Lanceurs d’alerte",
+      "Personnel incontrôlable"
+    ],
+    "opinion_joueur": "Distant, utilitariste"
+  },
+  "comportement_jeu": {
+    "routine_quotidienne": [
+      "Réunions administratives",
+      "Validation de rapports",
+      "Gestion de crises internes"
+    ],
+    "reactions_cles": [
+      "Intervient seulement si ses intérêts sont menacés",
+      "Sacrifie un subordonné pour se protéger"
+    ],
+    "declencheurs_conflit": [
+      "Fuite d’informations",
+      "Inspection officielle",
+      "Émeute majeure"
+    ],
+    "possibilites_interaction": [
+      "Bloquer ou accélérer une procédure",
+      "Couvrir une bavure",
+      "Donner des ordres disciplinaires",
+      "Manipuler les statistiques officielles"
+    ]
+  },
+  "secrets_arcs_narratifs": {
+    "secrets": [
+      "Falsification de rapports internes",
+      "Accords tacites avec certains gardes"
+    ],
+    "evolution_possible": [
+      "Directeur intouchable",
+      "Directeur corrompu exposé",
+      "Chute politique et judiciaire"
+    ],
+    "evenement_special": [
+      "Inspection surprise",
+      "Scandale médiatique",
+      "Révocation"
+    ]
+  }
+}
+
+
+
+// Juge
+
+
+{
+  "id": "pnj_juge_01",
+  "identite": {
+    "nom": "Isabelle Moreau",
+    "age": 52,
+    "role": "Juge d’instruction",
+    "zone_principale": "Tribunal (hors prison)",
+    "anciennete": "22 ans de magistrature"
+  },
+  "profil_psychologique": {
+    "temperament": "Froide, rigoureuse, distante",
+    "moral": 85,
+    "loyaute": "Très élevée envers la loi",
+    "corruptibilite": "Très faible",
+    "peurs_failles": [
+      "Erreur judiciaire",
+      "Scandale public",
+      "Perte de crédibilité"
+    ],
+    "motivations": [
+      "Appliquer la loi strictement",
+      "Préserver l’ordre judiciaire",
+      "Protéger sa réputation"
+    ]
+  },
+  "competences": {
+    "principale": "Décision judiciaire",
+    "secondaires": [
+      "Analyse de dossiers",
+      "Interrogatoire"
+    ],
+    "autorite_influence": "Très élevée",
+    "stress_max": "Élevé"
+  },
+  "relations": {
+    "allies": [
+      "Procureur",
+      "Administration judiciaire"
+    ],
+    "ennemis": [
+      "Avocats manipulateurs",
+      "Détenus récidivistes"
+    ],
+    "opinion_joueur": "Strictement basée sur le dossier"
+  },
+  "comportement_jeu": {
+    "routine_quotidienne": [
+      "Audiences",
+      "Étude des dossiers",
+      "Rédaction de décisions"
+    ],
+    "reactions_cles": [
+      "Inflexible face aux émotions",
+      "Peut durcir une peine si elle détecte une manipulation"
+    ],
+    "declencheurs_conflit": [
+      "Mensonge prouvé",
+      "Pression médiatique",
+      "Intervention politique"
+    ],
+    "possibilites_interaction": [
+      "Décider d’une libération conditionnelle",
+      "Alourdir ou réduire une peine",
+      "Ordonner une enquête",
+      "Bloquer une procédure"
+    ]
+  },
+  "secrets_arcs_narratifs": {
+    "secrets": [
+      "A déjà couvert une décision controversée pour protéger l’institution"
+    ],
+    "evolution_possible": [
+      "Juge inflexible",
+      "Juge sous pression politique",
+      "Juge discréditée"
+    ],
+    "evenement_special": [
+      "Procès médiatisé",
+      "Recours exceptionnel",
+      "Enquête disciplinaire"
+    ]
+  }
+}
+
+
+
+
