@@ -9,6 +9,8 @@ function Game({ startingBonus }) {
   const [messages,    setMessages]            = React.useState([{ text: "Bienvenue à Blackridge. Bonne chance.", id: Date.now() }]);
   const [isShakedown, setIsShakedown]         = React.useState(false);
   const [storyStep, setStoryStep]             = React.useState(0);
+  const [chosenPath, setChosenPath]           = React.useState(null); // 'escape' ou 'gang'
+  const [showPathChoice, setShowPathChoice]   = React.useState(false);
 
   // Temps, énergie, stats
   const [energy, setEnergy]   = React.useState(100);
@@ -31,8 +33,8 @@ function Game({ startingBonus }) {
   // Relations PNJ : { npcId: trustPoints }
   const [relations, setRelations] = React.useState({});
 
-  //Choix de chemin
-  const [chosenPath, setChosenPath] = React.useState(null); // 'escape' ou 'gang'
+  // Etat du tunnel de l'évasion
+  const [tunnelProgress, setTunnelProgress] = React.useState(0);
 
   // ─── SYSTÈME DE QUÊTES ──────────────────────────────────
   // Initialisation : quête de départ déverrouillée
@@ -74,6 +76,14 @@ function Game({ startingBonus }) {
 
   const modifyTrust = (npcId, delta) =>
     setRelations(prev => ({ ...prev, [npcId]: clamp((prev[npcId] || 0) + delta, -100, 100) }));
+
+  // ─── DÉCLENCHEUR DE L'HISTOIRE ──────────────────────────
+  React.useEffect(() => {
+    // Si on atteint 50 de Rép et qu'on n'a pas encore choisi son destin
+    if (stats.reputation >= 50 && !chosenPath && !showPathChoice) {
+      setShowPathChoice(true);
+    }
+  }, [stats.reputation]);
 
   // ─── SYSTÈME DE QUÊTES ──────────────────────────────────
 
@@ -322,7 +332,7 @@ function Game({ startingBonus }) {
 
   // ─── LOGIQUE PRINCIPALE DES ACTIONS ─────────────────────
   const handleAction = (action) => {
-    if (isShakedown || activeEvent) return;
+    if (isShakedown || activeEvent || showPathChoice) return;
     const now    = time % 1440;
     const isNight = (now > 1320 || now < 360);
     const cfg    = GAME_SETTINGS.PROGRESSION;
@@ -330,10 +340,12 @@ function Game({ startingBonus }) {
     // 1. Déplacements
     if (action.type === "move") {
       if (isNight && !["cell", "solitary"].includes(action.leads_to)) {
+        let baseRisk = (quests.some(q => q.id === "quest_rat_network" && q.status === "completed")) ? 0.45 : 0.75;
         const trust      = relations["garde_corridor"] || 0;
         const riskReduce = trust > 50 ? 0.25 : 0;          // Garde corrompu réduit le risque
         const patrolInfo = quests.some(q => q.id === "quest_rat_network" && q.status === "completed");
         const baseRisk   = patrolInfo ? 0.45 : 0.75;        // Info patrouilles = risque réduit
+        if (chosenPath === "escape") baseRisk -= 0.20; // Bonus Fugitif : Discrétion accrue
         const risk       = Math.max(0, baseRisk - (stats.agilite * 0.025) - riskReduce);
         if (Math.random() < risk) {
           addMessage("🚨 PATROUILLE ! Direction le trou !");
@@ -524,18 +536,35 @@ function Game({ startingBonus }) {
     }
   }
     
-    // 17. Racket
+    // 17. Racket (Réservé au Parrain ou forte Force)
     else if (action.type === "racket") {
-    if (stats.force >= 60 || stats.reputation >= 50) {
-      setInventory(prev => [...prev, "cigarettes", "cigarettes", "cigarettes"]);
-      addMessage("💰 Tes hommes ont collecté la taxe. (+3 🚬)");
-      setStats(s => ({ ...s, moral: s.moral + 5, reputation: s.reputation + 2 }));
-    }
-    else {
-      addMessage("🤕 Tu as essayé de racketter quelqu'un, mais il s'est défendu !");
+      const canRacket = chosenPath === "gang" || stats.force >= 60;
+      if (!canRacket) return addMessage("⚠️ Tu n'es pas assez intimidant pour racketter.");
+      
+      if (energy < 20) return addMessage("⚠️ Trop fatigué pour faire pression.");
+      
       setEnergy(e => e - 20);
+      setInventory(prev => [...prev, "cigarettes", "cigarettes"]);
+      modifyStat("reputation", 2);
+      modifyStat("moral", 5);
+      setTime(t => t + 40);
+      addMessage("💰 'Taxe de protection' collectée. (+2 🚬, +2 Rép)");
     }
-  };
+
+    // 18. Préparer l'évasion (Réservé au Fugitif)
+    else if (action.type === "dig_tunnel") {
+      if (!inventory.includes("shivan")) return addMessage("⚠️ Il te faut un outil pointu (Shivan) pour creuser.");
+      if (energy < 40) return addMessage("⚠️ Creuser demande trop d'énergie.");
+      
+      setEnergy(e => e - 40);
+      setTunnelProgress(prev => prev + 10);
+      setTime(t => t + 120);
+      addMessage(`🕳️ Le tunnel avance... (${tunnelProgress + 10}%)`);
+      
+      if (tunnelProgress + 10 >= 100) {
+        addMessage("✨ LE TUNNEL EST PRÊT. Tu peux tenter l'évasion cette nuit !");
+      }
+    };
 
   // ─── INTERACTIONS SOCIALES (enrichies) ──────────────────
   const handleSocialAction = ({ subType, npc, specialAction }) => {
@@ -702,12 +731,43 @@ function Game({ startingBonus }) {
     return () => clearTimeout(t);
   }, [questNotif]);
 
+  // ─── RENDU DU CHOIX DE DESTIN ───────────────────────────
+  const PathChoiceModal = () => {
+    return React.createElement("div", { className: "fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-6" },
+      React.createElement("div", { className: "bg-gray-900 border-2 border-yellow-600 p-8 rounded-2xl max-w-2xl w-full text-center shadow-[0_0_50px_rgba(202,138,4,0.3)]" },
+        React.createElement("h2", { className: "text-3xl font-black text-white mb-2" }, "LE MOMENT DE VÉRITÉ"),
+        React.createElement("p", { className: "text-gray-400 mb-8 italic" }, "Ta réputation te précède. Quelle sera ta trace à Blackridge ?"),
+        
+        React.createElement("div", { className: "grid grid-cols-2 gap-6" },
+          // Option 1 : Le Parrain
+          React.createElement("button", {
+            onClick: () => { setChosenPath("gang"); setShowPathChoice(false); addMessage("👑 Tu as choisi de régner sur Blackridge."); },
+            className: "p-6 bg-red-900/20 border-2 border-red-900 hover:bg-red-900/40 rounded-xl transition-all group"
+          },
+            React.createElement("span", { className: "text-4xl mb-4 block" }, "👑"),
+            React.createElement("span", { className: "text-red-500 font-black block" }, "DEVENIR LE PARRAIN"),
+            React.createElement("span", { className: "text-[10px] text-gray-400" }, "Contrôle les gangs, rackette les faibles et corromps les gardes.")
+          ),
+          // Option 2 : Le Fugitif
+          React.createElement("button", {
+            onClick: () => { setChosenPath("escape"); setShowPathChoice(false); addMessage("🏃 Tu as choisi la liberté. Personne ne te retiendra."); },
+            className: "p-6 bg-blue-900/20 border-2 border-blue-900 hover:bg-blue-900/40 rounded-xl transition-all group"
+          },
+            React.createElement("span", { className: "text-4xl mb-4 block" }, "🏃"),
+            React.createElement("span", { className: "text-blue-500 font-black block" }, "LE FUGITIF"),
+            React.createElement("span", { className: "text-[10px] text-gray-400" }, "Discrétion accrue, creuse un tunnel et planifie ta sortie.")
+          )
+        )
+      )
+    );
+  };
+  
   // ─── RENDU ──────────────────────────────────────────────
   const faction = WORLD_DATA.gangs[playerFaction];
 
   return React.createElement("div", {
-    className: `min-h-screen p-4 max-w-5xl mx-auto space-y-4 ${isShakedown ? "opacity-40 pointer-events-none" : ""}`
-  },
+    className: `min-h-screen p-4 max-w-5xl mx-auto space-y-4 ${isShakedown ? "opacity-40 pointer-events-none" : ""}`  },
+    showPathChoice && React.createElement(PathChoiceModal),
 
     // ── HUD ─────────────────────────────────────────────
     React.createElement("div", { className: "grid grid-cols-3 md:grid-cols-10 gap-2 bg-gray-900 p-4 rounded-xl border border-blue-900/40 shadow-xl text-white" },
