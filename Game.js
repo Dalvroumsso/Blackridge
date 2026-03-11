@@ -495,13 +495,26 @@ function Game({ startingBonus }) {
       }
     }
 
-    // 14. Entrée
+    // 14. Travail a la laverie
+    else if (action.type === "laundry_work") {
+      if (energy >= 30) {
+        setEnergy(e => e - 30);
+        setTime(t => t + 120); // 2 heures de travail
+        setInventory(prev => [...prev, "cigarettes", "cigarettes"]); // Salaire : 2 clopes
+        setStats(s => ({ ...s, reputation: s.reputation + 1 }));
+        addMessage("🧺 Tu as passé 2h à laver des uniformes sales. (+2 🚬)");
+      } else {
+        addMessage("⚠️ Tu es trop fatigué pour travailler à la laverie.");
+      }
+    }
+
+    // 15. Entrée
     else if (action.type === "entrance_event") {
       addMessage("👮 Le garde d'entrée te dévisage mais ne dit rien.");
       setTime(t => t + 10);
     }
 
-    // 15. Actions sociales
+    // 16. Actions sociales
     else if (action.type === "social") {
       handleSocialAction(action);
     }
