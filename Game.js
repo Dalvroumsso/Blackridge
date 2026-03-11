@@ -340,14 +340,17 @@ function Game({ startingBonus }) {
     // 1. Déplacements
     if (action.type === "move") {
       if (isNight && !["cell", "solitary"].includes(action.leads_to)) {
-        let baseRisk = (quests.some(q => q.id === "quest_rat_network" && q.status === "completed")) ? 0.45 : 0.75;
-        const trust      = relations["garde_corridor"] || 0;
-        const riskReduce = trust > 50 ? 0.25 : 0;          // Garde corrompu réduit le risque
         const patrolInfo = quests.some(q => q.id === "quest_rat_network" && q.status === "completed");
-        const baseRisk   = patrolInfo ? 0.45 : 0.75;        // Info patrouilles = risque réduit
-        if (chosenPath === "escape") baseRisk -= 0.20; // Bonus Fugitif : Discrétion accrue
-        const risk       = Math.max(0, baseRisk - (stats.agilite * 0.025) - riskReduce);
-        if (Math.random() < risk) {
+        let riskValue = patrolInfo ? 0.45 : 0.75; 
+        
+        const trust = relations["garde_corridor"] || 0;
+        const riskReduce = trust > 50 ? 0.25 : 0;
+        
+        if (chosenPath === "escape") riskValue -= 0.20; 
+
+        const finalRisk = Math.max(0, riskValue - (stats.agilite * 0.025) - riskReduce);
+        
+        if (Math.random() < finalRisk) {
           addMessage("🚨 PATROUILLE ! Direction le trou !");
           modifyStat("reputation", -5);
           setTime(t => t + 600);
@@ -534,8 +537,7 @@ function Game({ startingBonus }) {
     else if (action.type === "social") {
       handleSocialAction(action);
     }
-  }
-    
+      
     // 17. Racket (Réservé au Parrain ou forte Force)
     else if (action.type === "racket") {
       const canRacket = chosenPath === "gang" || stats.force >= 60;
@@ -553,28 +555,26 @@ function Game({ startingBonus }) {
 
     // 18. Préparer l'évasion (Réservé au Fugitif)
     else if (action.type === "dig_tunnel") {
-    // Vérification de l'outil
+      if (currentRoom !== "cell") return addMessage("⚠️ Tu ne peux creuser que dans ta cellule !");
       if (!inventory.includes("cuillere_taillee")) {
-      return addMessage("⚠️ Tu ne peux pas creuser avec tes mains. Il te faut un outil (Cuillère Taillée).");
-    }
-
-      if (energy < 30) return addMessage("⚠️ Tu es trop épuisé pour creuser.");
+        return addMessage("⚠️ Tu ne peux pas creuser avec tes mains. Il te faut l'outil du Rat.");
+      }
+      if (energy < 30) return addMessage("⚠️ Trop épuisé pour creuser.");
 
       setEnergy(e => Math.max(0, e - 30));
-      setTime(t => t + 60); // 1h de travail
-  
-      // On utilise une variable d'état tunnelProgress (à ajouter dans tes useState)
+      setTime(t => t + 60);
+      
       setTunnelProgress(prev => {
-      const next = prev + 10;
-      if (next >= 100) {
-      addMessage("✨ LE TUNNEL EST FINI ! Tu peux t'évader à tout moment de nuit.");
-      } else {
-      addMessage(`🕳️ Tu grattes le mur... Progression : ${next}%`);
-      }
-    return next;
-  });
-}
-    };
+        const next = Math.min(100, prev + 10);
+        if (next >= 100) {
+          addMessage("✨ LE TUNNEL EST FINI ! Tu peux t'évader de nuit.");
+        } else {
+          addMessage(`🕳️ Tu grattes le mur... Progression : ${next}%`);
+        }
+        return next;
+      });
+    }
+  };
 
   // ─── INTERACTIONS SOCIALES (enrichies) ──────────────────
   const handleSocialAction = ({ subType, npc, specialAction }) => {
@@ -642,6 +642,36 @@ function Game({ startingBonus }) {
     const trust = relations[npc.id] || 0;
     const required = NPCS_DB[npc.id]?.specialUnlock?.trust || 999;
 
+    // Actions qui ne demandent pas de confiance (Quêtes de départ)
+    if (npc.id === "dealer" && actionType === "ask_tool") {
+      if (!quests.find(q => q.id === "quest_tool_rat")) {
+        setQuests(prev => [...prev, {
+          id: "quest_tool_rat",
+          status: "active",
+          objectives: QUESTS_DB["quest_tool_rat"].objectives.map(o => ({ ...o, progress: 0 }))
+        }]);
+        addMessage("🐀 Le Rat : 'Je peux t'avoir ça, mais il me faut 10 clopes d'abord.'");
+      }
+      return; 
+    }
+
+    if (npc.id === "brute" && actionType === "challenge_boss") {
+      if (stats.reputation < 40) return addMessage("👺 La Brute : 'T'es un moustique. Dégage.'");
+      
+      addMessage("👺 La Brute : 'On va voir qui est le vrai patron ici !'");
+      setTimeout(() => setCombatNpc(npc), 1000);
+      
+      if (!quests.find(q => q.id === "quest_become_boss")) {
+        setQuests(prev => [...prev, {
+          id: "quest_become_boss",
+          status: "active",
+          objectives: QUESTS_DB["quest_become_boss"].objectives.map(o => ({ ...o, progress: 0 }))
+        }]);
+      }
+      return;
+    }
+
+    // Actions liées à la confiance
     if (trust < required) {
       addMessage(`🔒 Confiance insuffisante avec ${npc.name}. (${trust}/${required})`);
       return;
@@ -686,38 +716,6 @@ function Game({ startingBonus }) {
         addMessage("💉 Jocelyn peut t'aider, mais il te faut d'abord un sédatif.");
       }
     }
-    
-      // Proposer la quête du Rat
-  if (npc.id === "dealer" && actionType === "ask_tool") {
-    if (!quests.find(q => q.id === "quest_tool_rat")) {
-      setQuests(prev => [...prev, {
-        id: "quest_tool_rat",
-        status: "active",
-        objectives: QUESTS_DB["quest_tool_rat"].objectives.map(o => ({ ...o, progress: 0 }))
-      }]);
-      addMessage("🐀 Le Rat : 'Je peux t'avoir de quoi creuser, mais ça me coûtera 10 clopes.'");
-    }
-  }
-
-  // Proposer le défi à La Brute (si on a 40 de Rép)
-  if (npc.id === "brute" && actionType === "challenge_boss") {
-    if (stats.reputation < 40) {
-      return addMessage("👺 La Brute : 'T'es personne ici. Reviens quand t'auras un nom.'");
-    }
-    addMessage("👺 La Brute : 'Tu veux ma place ? Voyons ce que tu as dans le ventre !'");
-    // Lance le combat
-    setTimeout(() => setCombatNpc(npc), 1000);
-    // Active la quête si pas déjà là
-    if (!quests.find(q => q.id === "quest_become_boss")) {
-       setQuests(prev => [...prev, {
-         id: "quest_become_boss",
-         status: "active",
-         objectives: QUESTS_DB["quest_become_boss"].objectives.map(o => ({ ...o, progress: 0 }))
-       }]);
-    }
-  }
-};
-    
   };
 
   // ─── GESTION DES CLICS SUR PNJ ──────────────────────────
