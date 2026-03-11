@@ -31,6 +31,9 @@ function Game({ startingBonus }) {
   // Relations PNJ : { npcId: trustPoints }
   const [relations, setRelations] = React.useState({});
 
+  //Choix de chemin
+  const [chosenPath, setChosenPath] = React.useState(null); // 'escape' ou 'gang'
+
   // ─── SYSTÈME DE QUÊTES ──────────────────────────────────
   // Initialisation : quête de départ déverrouillée
   const initQuests = () => {
@@ -518,6 +521,19 @@ function Game({ startingBonus }) {
     // 16. Actions sociales
     else if (action.type === "social") {
       handleSocialAction(action);
+    }
+  }
+    
+    // 17. Racket
+    else if (action.type === "racket") {
+    if (stats.force >= 60 || stats.reputation >= 50) {
+      setInventory(prev => [...prev, "cigarettes", "cigarettes", "cigarettes"]);
+      addMessage("💰 Tes hommes ont collecté la taxe. (+3 🚬)");
+      setStats(s => ({ ...s, moral: s.moral + 5, reputation: s.reputation + 2 }));
+    }
+    else {
+      addMessage("🤕 Tu as essayé de racketter quelqu'un, mais il s'est défendu !");
+      setEnergy(e => e - 20);
     }
   };
 
