@@ -8,6 +8,7 @@ function Game({ startingBonus }) {
   const [inventory,   setInventory]           = React.useState(["brossette", "savon"]);
   const [messages,    setMessages]            = React.useState([{ text: "Bienvenue à Blackridge. Bonne chance.", id: Date.now() }]);
   const [isShakedown, setIsShakedown]         = React.useState(false);
+  const [storyStep, setStoryStep]             = React.useState(0);
 
   // Temps, énergie, stats
   const [energy, setEnergy]   = React.useState(100);
