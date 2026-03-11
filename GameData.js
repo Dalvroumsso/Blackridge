@@ -660,7 +660,7 @@ const WORLD_DATA = {
         { id: "train_yard",  label: "Musculation (Force)",     action: { type: "train", stat: "force",  energy: 35, cooldownKey: "force_yard" } },
         { id: "jog",         label: "Course (Agilité)",        action: { type: "train", stat: "agilite",energy: 25, cooldownKey: "agilite" } },
         { id: "observe",     label: "Observer (Intelligence)", action: { type: "train", stat: "intelligence", energy: 5, cooldownKey: "intelligence" } },
-        { id: "racket", label: "💰 Racketter",                 action: { type: "racket" } }
+        { id: "racket",      label: "💰 Racketter",            action: { type: "racket" } }
       ]
     },
     canteen: {
