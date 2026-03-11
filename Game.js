@@ -553,17 +553,27 @@ function Game({ startingBonus }) {
 
     // 18. Préparer l'évasion (Réservé au Fugitif)
     else if (action.type === "dig_tunnel") {
-      if (!inventory.includes("shivan")) return addMessage("⚠️ Il te faut un outil pointu (Shivan) pour creuser.");
-      if (energy < 40) return addMessage("⚠️ Creuser demande trop d'énergie.");
-      
-      setEnergy(e => e - 40);
-      setTunnelProgress(prev => prev + 10);
-      setTime(t => t + 120);
-      addMessage(`🕳️ Le tunnel avance... (${tunnelProgress + 10}%)`);
-      
-      if (tunnelProgress + 10 >= 100) {
-        addMessage("✨ LE TUNNEL EST PRÊT. Tu peux tenter l'évasion cette nuit !");
+    // Vérification de l'outil
+      if (!inventory.includes("cuillere_taillee")) {
+      return addMessage("⚠️ Tu ne peux pas creuser avec tes mains. Il te faut un outil (Cuillère Taillée).");
+    }
+
+      if (energy < 30) return addMessage("⚠️ Tu es trop épuisé pour creuser.");
+
+      setEnergy(e => Math.max(0, e - 30));
+      setTime(t => t + 60); // 1h de travail
+  
+      // On utilise une variable d'état tunnelProgress (à ajouter dans tes useState)
+      setTunnelProgress(prev => {
+      const next = prev + 10;
+      if (next >= 100) {
+      addMessage("✨ LE TUNNEL EST FINI ! Tu peux t'évader à tout moment de nuit.");
+      } else {
+      addMessage(`🕳️ Tu grattes le mur... Progression : ${next}%`);
       }
+    return next;
+  });
+}
     };
 
   // ─── INTERACTIONS SOCIALES (enrichies) ──────────────────
