@@ -49,6 +49,13 @@ const ITEMS_DB = {
 //  Chaque PNJ a : backstory, faction, seuils de confiance,
 //  dialogues évolutifs, quête associée, capacité spéciale
 // ============================================================
+
+const STORY_ARC = {
+  ACT_1: { id: "survival", name: "Le Nouveau", condition: { reputation: 0 } },
+  ACT_2: { id: "contact", name: "L'Initié", condition: { reputation: 30 } },
+  ACT_3: { id: "escape", name: "Le Plan", condition: { reputation: 70, item: "plan_evasion" } }
+};
+
 const NPCS_DB = {
 
   "garde_corridor": {
@@ -678,6 +685,13 @@ const WORLD_DATA = {
       hotspots: [
         { id: "toCorridor", label: "Sortir",                    action: { type: "move", leads_to: "corridor" } },
         { id: "hack",       label: "Désactiver les caméras",    action: { type: "hack" } }
+      ]
+    },
+    laundry: {
+      name: "La Blanchisserie",
+      hotspots: [
+        { id: "work", label: "Travailler (2h)", action: { type: "laundry_work" } },
+        { id: "exit", label: "Sortir", action: { type: "move", leads_to: "corridor" } }
       ]
     },
     solitary: {
