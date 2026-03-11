@@ -686,6 +686,38 @@ function Game({ startingBonus }) {
         addMessage("💉 Jocelyn peut t'aider, mais il te faut d'abord un sédatif.");
       }
     }
+    
+      // Proposer la quête du Rat
+  if (npc.id === "dealer" && actionType === "ask_tool") {
+    if (!quests.find(q => q.id === "quest_tool_rat")) {
+      setQuests(prev => [...prev, {
+        id: "quest_tool_rat",
+        status: "active",
+        objectives: QUESTS_DB["quest_tool_rat"].objectives.map(o => ({ ...o, progress: 0 }))
+      }]);
+      addMessage("🐀 Le Rat : 'Je peux t'avoir de quoi creuser, mais ça me coûtera 10 clopes.'");
+    }
+  }
+
+  // Proposer le défi à La Brute (si on a 40 de Rép)
+  if (npc.id === "brute" && actionType === "challenge_boss") {
+    if (stats.reputation < 40) {
+      return addMessage("👺 La Brute : 'T'es personne ici. Reviens quand t'auras un nom.'");
+    }
+    addMessage("👺 La Brute : 'Tu veux ma place ? Voyons ce que tu as dans le ventre !'");
+    // Lance le combat
+    setTimeout(() => setCombatNpc(npc), 1000);
+    // Active la quête si pas déjà là
+    if (!quests.find(q => q.id === "quest_become_boss")) {
+       setQuests(prev => [...prev, {
+         id: "quest_become_boss",
+         status: "active",
+         objectives: QUESTS_DB["quest_become_boss"].objectives.map(o => ({ ...o, progress: 0 }))
+       }]);
+    }
+  }
+};
+    
   };
 
   // ─── GESTION DES CLICS SUR PNJ ──────────────────────────
