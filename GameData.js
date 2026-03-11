@@ -28,20 +28,22 @@ const GAME_SETTINGS = {
 //  BASE D'OBJETS
 // ============================================================
 const ITEMS_DB = {
-  "brossette":    { name: "Brossette",          icon: "🪥", illegal: false, value: 0 },
-  "savon":        { name: "Savon",               icon: "🧼", illegal: false, value: 1 },
-  "cigarettes":   { name: "Cigarettes",          icon: "🚬", illegal: true,  value: 5 },
-  "livre_adulte": { name: "Livre Adulte",        icon: "🔞", illegal: true,  value: 10 },
-  "shivan":       { name: "Shivan (Couteau)",    icon: "🔪", illegal: true,  value: 15 },
-  "dopant":       { name: "Dopant",              icon: "🧪", illegal: true,  value: 8 },
-  "corde":        { name: "Bout de corde",       icon: "🪢", illegal: true,  value: 3 },
-  "savon_corde":  { name: "Savon de combat",     icon: "🧼🪢", illegal: true, value: 12 },
-  "lettre":       { name: "Lettre codée",        icon: "✉️", illegal: false, value: 2 },
-  "plan_prison":  { name: "Plan de la prison",   icon: "🗺️", illegal: true,  value: 20 },
-  "sedatif":      { name: "Sédatif",             icon: "💊", illegal: true,  value: 12 },
-  "clef_usee":    { name: "Clef usée",           icon: "🗝️", illegal: true,  value: 8 },
-  "radio_cassee": { name: "Radio cassée",        icon: "📻", illegal: false, value: 1 },
-  "photo_famille":{ name: "Photo de famille",    icon: "🖼️", illegal: false, value: 0 },
+  "brossette":    { name: "Brossette",             icon: "🪥", illegal: false, value: 0 },
+  "savon":        { name: "Savon",                 icon: "🧼", illegal: false, value: 1 },
+  "cigarettes":   { name: "Cigarettes",            icon: "🚬", illegal: true,  value: 5 },
+  "livre_adulte": { name: "Livre Adulte",          icon: "🔞", illegal: true,  value: 10 },
+  "shivan":       { name: "Shivan (Couteau)",      icon: "🔪", illegal: true,  value: 15 },
+  "dopant":       { name: "Dopant",                icon: "🧪", illegal: true,  value: 8 },
+  "corde":        { name: "Bout de corde",         icon: "🪢", illegal: true,  value: 3 },
+  "savon_corde":  { name: "Savon de combat",       icon: "🧼🪢", illegal: true, value: 12 },
+  "lettre":       { name: "Lettre codée",          icon: "✉️", illegal: false, value: 2 },
+  "plan_prison":  { name: "Plan de la prison",     icon: "🗺️", illegal: true,  value: 20 },
+  "sedatif":      { name: "Sédatif",               icon: "💊", illegal: true,  value: 12 },
+  "clef_usee":    { name: "Clef usée",             icon: "🗝️", illegal: true,  value: 8 },
+  "radio_cassee": { name: "Radio cassée",          icon: "📻", illegal: false, value: 1 },
+  "photo_famille":{ name: "Photo de famille",      icon: "🖼️", illegal: false, value: 0 },
+  "cuillere_taillee": { name: "Cuillère Taillée",  icon: "🥄", illegal: true, value: 40 },
+  "surin_chef": { name: "Surin de Chef",           icon: "🗡️", illegal: true, value: 100 },
 };
 
 // ============================================================
@@ -394,6 +396,30 @@ const QUESTS_DB = {
     rewards: { ending: "escape", message: "Tout est en place. L'heure venue, tu sauras quoi faire." },
     prerequisite: ["quest_gang_choice", "quest_rat_network"],
     unlocks: []
+  },
+  
+    "quest_tool_rat": {
+    title: "L'outil de terrassement",
+    icon: "🥄",
+    objectives: [
+      { type: "have_item", itemId: "cigarettes", count: 10, text: "Réunir 10 cigarettes pour le Rat" }
+    ],
+    rewards: {
+      items: ["cuillere_taillee"],
+      message: "Le Rat t'a donné une cuillère aiguisée. Parfait pour le mur de ta cellule."
+    }
+  },
+  "quest_become_boss": {
+    title: "Le Trône de Blackridge",
+    icon: "👑",
+    objectives: [
+      { type: "combat_win", target: "brute", count: 1, text: "Vaincre La Brute en duel" }
+    ],
+    rewards: {
+      items: ["surin_chef"],
+      reputation: 30,
+      message: "La Brute s'est inclinée. Le Surin de Chef est à toi. Tu es le patron."
+    }
   }
 };
 
@@ -616,6 +642,7 @@ const WORLD_DATA = {
         { id: "pushups",    label: "Pompes (Force)",      action: { type: "train", stat: "force",      energy: 30, cooldownKey: "force" } },
         { id: "situps",     label: "Abdos (Résistance)",  action: { type: "train", stat: "resistance", energy: 30, cooldownKey: "resistance" } },
         { id: "meditate",   label: "Méditer (Moral)",     action: { type: "train", stat: "moral",      energy: 10, cooldownKey: "moral" } },
+        { id: "dig", label: "🕳️ Creuser",                 action: { type: "dig_tunnel" } },
         { id: "sleep",      label: "Dormir",              action: { type: "sleep" } }
       ]
     },
@@ -632,7 +659,8 @@ const WORLD_DATA = {
         { id: "toCorridor",  label: "Sortir",                  action: { type: "move", leads_to: "corridor" } },
         { id: "train_yard",  label: "Musculation (Force)",     action: { type: "train", stat: "force",  energy: 35, cooldownKey: "force_yard" } },
         { id: "jog",         label: "Course (Agilité)",        action: { type: "train", stat: "agilite",energy: 25, cooldownKey: "agilite" } },
-        { id: "observe",     label: "Observer (Intelligence)", action: { type: "train", stat: "intelligence", energy: 5, cooldownKey: "intelligence" } }
+        { id: "observe",     label: "Observer (Intelligence)", action: { type: "train", stat: "intelligence", energy: 5, cooldownKey: "intelligence" } },
+        { id: "racket", label: "💰 Racketter",                 action: { type: "racket" } }
       ]
     },
     canteen: {
