@@ -81,7 +81,12 @@ function Game({ startingBonus }) {
 
   const modifyTrust = (npcId, delta) =>
     setRelations(prev => ({ ...prev, [npcId]: clamp((prev[npcId] || 0) + delta, -100, 100) }));
-
+  
+  const getImg = (path) => {
+    if (!path || path === "" || path === "undefined") return IMAGE_DEV;
+    return path;
+  };
+  
   // ─── DÉCLENCHEUR DE L'HISTOIRE ──────────────────────────
   React.useEffect(() => {
     // Si on atteint 50 de Rép et qu'on n'a pas encore choisi son destin
@@ -877,7 +882,11 @@ function Game({ startingBonus }) {
 
         // En-tête PNJ
         React.createElement("div", { className: "text-center mb-4" },
-          React.createElement("div", { className: "text-4xl mb-2" }, NPCS_DB[interactingNpc.id]?.icon || interactingNpc.icon || "👤"),
+          React.createElement("img", { 
+            src: getImg(NPCS_DB[interactingNpc.id]?.image), // On cherche l'image dans la DB
+            onError: (e) => { e.target.src = IMAGE_DEV; },   // Si le fichier n'existe pas
+            className: "w-24 h-24 mx-auto rounded-full border-2 border-blue-500 mb-2 object-cover" 
+          }),
           React.createElement("h2", { className: "text-white font-black text-2xl" }, interactingNpc.name),
           React.createElement("p", { className: `text-[11px] font-bold uppercase mb-1 ${WORLD_DATA.gangs[NPCS_DB[interactingNpc.id]?.faction]?.color || "text-gray-500"}` },
             WORLD_DATA.gangs[NPCS_DB[interactingNpc.id]?.faction]?.name || "Indépendant"
