@@ -1,3 +1,12 @@
+//Affichage image en developpement
+const IMAGE_DEV = "assets/images/en_developpement.png";
+
+const getImg = (path) => {
+  if (!path || path === "" || path === "undefined") return IMAGE_DEV;
+  return path;
+};
+
+//Fonction RoomView
 function RoomView({ roomId, npcs = [], hotspots = [], onHotspotClick, onNpcClick }) {
   // Traduction propre du nom de la salle via WORLD_DATA
   const roomName = (WORLD_DATA.rooms[roomId] && WORLD_DATA.rooms[roomId].name) || roomId;
