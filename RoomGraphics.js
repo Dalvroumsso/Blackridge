@@ -1,4 +1,7 @@
 function RoomGraphics({ roomId, npcs = [], onNpcClick }) {
+  // 1. On définit le chemin de ton image "En développement"
+  const IMAGE_DEV = "images/en_developpement.png";
+
   const roomBackgrounds = {
     entrance: "images/entrance.png",
     cell: "images/cell.png",
@@ -17,15 +20,17 @@ function RoomGraphics({ roomId, npcs = [], onNpcClick }) {
     "div",
     { className: "relative w-full h-80 rounded-xl overflow-hidden border-2 border-gray-700 shadow-2xl bg-gray-900" },
     
-    // 1. Décor de fond
+    // --- DÉCOR DE FOND ---
     React.createElement("img", {
-      src: roomBackgrounds[roomId] || "images/default.png",
+      // Si la salle n'est pas dans la liste, on met l'image DEV
+      src: roomBackgrounds[roomId] || IMAGE_DEV, 
       className: "absolute inset-0 w-full h-full object-cover transition-opacity duration-500",
       alt: `Vue de ${roomId}`,
-      onError: (e) => { e.target.src = "https://via.placeholder.com/800x450/222/555?text=Zone+Prison"; }
+      // Si le fichier est listé mais n'existe pas physiquement sur le disque
+      onError: (e) => { e.target.src = IMAGE_DEV; }
     }),
 
-    // 2. PNJs
+    // --- PNJs ---
     npcs.map((npc, i) =>
       React.createElement("div", {
         key: npc.id || i,
@@ -39,19 +44,21 @@ function RoomGraphics({ roomId, npcs = [], onNpcClick }) {
         onClick: () => onNpcClick && onNpcClick(npc)
       }, 
       
-      // Étiquette contextuelle (Troc ou Combat)
+      // Étiquette contextuelle
       React.createElement("span", {
         className: "absolute -top-12 left-1/2 -translate-x-1/2 bg-black/90 text-white text-[10px] px-2 py-1 rounded border border-gray-600 opacity-0 group-hover:opacity-100 whitespace-nowrap transition-opacity font-bold"
       }, npc.type === "trade" ? `🛒 TROQUER : ${npc.name}` : `💀 COMBATTRE : ${npc.name}`),
 
-      // Image du PNJ
+      // IMAGE DU PNJ
       React.createElement("img", {
-        src: `images/npcs/${npc.id}.png`,
+        // On cherche l'image. Si npc.image n'existe pas, on tente l'id, sinon DEV
+        src: npc.image || `images/npcs/${npc.id}.png`, 
         className: "w-16 h-24 object-contain hover:brightness-125 hover:scale-110 transition-all",
-        onError: (e) => { e.target.src = "https://via.placeholder.com/64x96?text=NPC"; }
+        // Sécurité si le fichier .png du PNJ est introuvable
+        onError: (e) => { e.target.src = IMAGE_DEV; }
       }),
 
-      // Nom permanent au survol
+      // Nom au survol
       React.createElement("span", {
         className: "absolute -bottom-6 left-1/2 -translate-x-1/2 text-white text-[10px] font-bold bg-black/50 px-2 rounded opacity-0 group-hover:opacity-100"
       }, npc.name)
