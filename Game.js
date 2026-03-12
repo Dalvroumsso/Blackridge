@@ -1,6 +1,11 @@
 // ============================================================
 //  Game.js  — Logique principale du jeu v2.0
 // ============================================================
+
+// Remplacement de l'image par en developpement
+const IMAGE_DEV = "assets/images/en_developpement.png";
+
+// Code du jeu
 function Game({ startingBonus }) {
 
   // ─── ÉTAT DU MONDE ──────────────────────────────────────
